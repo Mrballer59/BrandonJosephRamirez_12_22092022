@@ -5,26 +5,21 @@ import { Navigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { login } from "../../config/authentification";
-import { clearMessage } from "../../config/message";
 import "../../styles/index.css";
 
-const SignIn = (props) => {
+const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const { isLoggedIn } = useSelector((state) => state.auth);
-  const { message } = useSelector((state) => state.message);
+
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(clearMessage());
-    document.title = "Argent Bank -logn-in page";
-  }, [dispatch]);
-
+  // Veriables for the login in info
   const initialValues = {
     email: "",
     password: "",
   };
-
-  const validationPath = Yup.object().shape({
+  // setup for the login in info
+  const validationSchema = Yup.object().shape({
     email: Yup.string().required("This field is required!"),
     password: Yup.string().required("This field is required!"),
   });
@@ -32,15 +27,7 @@ const SignIn = (props) => {
   const handleLogin = (formValue) => {
     const { email, password } = formValue;
     setLoading(true);
-    dispatch(login({ email, password }))
-      .unwrap()
-      .then(() => {
-        props.history.push("/user");
-        window.location.reload();
-      })
-      .catch(() => {
-        setLoading(false);
-      });
+    dispatch(login({ email, password }));
   };
 
   if (isLoggedIn) {
@@ -51,22 +38,21 @@ const SignIn = (props) => {
     <main className="main bg-dark">
       <section className="sign-in-content">
         <i className="fa fa-user-circle sign-in-icon"></i>
-        <h1>Sign In</h1>
+        <h1 className="test1">Sign In</h1>
         <Formik
           initialValues={initialValues}
-          validationPath={validationPath}
+          validationSchema={validationSchema}
           onSubmit={handleLogin}
         >
           <Form>
             <div className="form-group input-wrapper">
-              <label htmlFor="username">Username</label>
+              <label htmlFor="email">Username</label>
               <Field name="email" type="text" className="form-control" />
               <ErrorMessage
                 name="email"
                 component="div"
                 className="alert alert-danger"
               />
-              {/* <input type="text" id="username" /> */}
             </div>
             <div className="form-group input-wrapper">
               <label htmlFor="password">Password</label>
@@ -76,7 +62,6 @@ const SignIn = (props) => {
                 component="div"
                 className="alert alert-danger"
               />
-              {/* <input type="password" id="password" /> */}
             </div>
             <div className="input-remember">
               <input type="checkbox" id="remember-me" />
@@ -88,21 +73,11 @@ const SignIn = (props) => {
                 className="btn btn-primary btn-block sign-in-button"
                 disabled={loading}
               >
-                {loading && (
-                  <span className="spinner-border spinner-border-sm"></span>
-                )}
                 <span>Sign In</span>
               </button>
             </div>
           </Form>
         </Formik>
-        {message && (
-          <div className="form-group">
-            <div className="alert alert-danger" role="alert">
-              {message}
-            </div>
-          </div>
-        )}
       </section>
     </main>
   );

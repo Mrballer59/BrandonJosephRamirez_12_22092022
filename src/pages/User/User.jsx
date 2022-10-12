@@ -10,21 +10,10 @@ const User = () => {
   console.log(currentUser);
   return (
     <div className="container">
-      <header className="jumbotron">
-        <h3>
-          <strong>{currentUser.user}</strong> Profile
-        </h3>
-      </header>
+      <header className="jumbotron"></header>
       <p>
         <strong>Token:</strong> {currentUser.body.token}
       </p>
-      <p>
-        <strong>Id:</strong> {currentUser.id}
-      </p>
-      <p>
-        <strong>Email:</strong> {currentUser.email}
-      </p>
-      <strong>Authorities:</strong>
     </div>
   );
 };
