@@ -8,9 +8,9 @@ import { login } from "../../config/authentification";
 import "../../styles/index.css";
 
 const SignIn = () => {
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const { isLoggedIn } = useSelector((state) => state.auth);
-
+  const { entryUser, loading } = useSelector((state) => state.profile);
   const dispatch = useDispatch();
 
   // Veriables for the login in info
@@ -20,13 +20,13 @@ const SignIn = () => {
   };
   // setup for the login in info
   const validationSchema = Yup.object().shape({
-    email: Yup.string().required("This field is required!"),
-    password: Yup.string().required("This field is required!"),
+    email: Yup.string().required("Email is required!"),
+    password: Yup.string().required("Password is required!"),
   });
 
   const handleLogin = (formValue) => {
     const { email, password } = formValue;
-    setLoading(true);
+    // setLoading(true);
     dispatch(login({ email, password }));
   };
 
