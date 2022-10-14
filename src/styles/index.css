@@ -233,6 +233,14 @@ body {
   font-size: 1rem;
   font-weight: normal;
 }
+.edit-name-input {
+  font-size: 1.3rem;
+  font-weight: bold;
+  width: 10rem;
+  border: 0;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
 
 .account-content-wrapper {
   width: 100%;
@@ -243,7 +251,7 @@ body {
   border-color: #00bc77;
   background-color: #00bc77;
   color: #fff;
-  font-weight: bold;
+  /* font-weight: bold; */
   padding: 10px;
 }
 
@@ -273,6 +281,13 @@ body {
 
 Form {
   margin-bottom: 0.5rem;
+}
+.logout-btn {
+  color: #2c3e50;
+  background-color: transparent;
+  border: 0;
+  font-weight: bold;
+  font-size: 1rem;
 }
 
 @media (min-width: 720px) {

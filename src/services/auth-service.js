@@ -9,14 +9,20 @@ const login = (email, password) => {
       password,
     })
     .then((res) => {
-      if (res.data.token) {
-        localStorage.setItem("email", JSON.stringify(res.data));
+      console.log(res.data);
+      if (res.data.body.token) {
+        localStorage.setItem("token", JSON.stringify(res.data.body.token));
       }
       return res.data;
     });
 };
+// this will need to be in a funciton button so when the user clicks it invokes the users token
+const logout = () => {
+  localStorage.removeItem("token");
+};
 
 const authService = {
   login,
+  logout,
 };
 export default authService;
