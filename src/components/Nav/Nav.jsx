@@ -28,7 +28,7 @@ export default function Nav() {
           <p>Loading & getting your profile ready </p>
         ) : (
           <div>
-            <NavLink className="main-nav-item" to="/sign-in">
+            <NavLink className="main-nav-item" to="/user">
               <FontAwesomeIcon icon={faUserCircle} className="user-icon" />
               {entryUser.body.firstName}
             </NavLink>
@@ -40,7 +40,7 @@ export default function Nav() {
         )
       ) : (
         <div>
-          <NavLink className="main-nav-item" to="/sign-in">
+          <NavLink className="main-nav-item" to="/user">
             <FontAwesomeIcon icon={faUserCircle} className="user-icon" />
             Sign In
           </NavLink>
