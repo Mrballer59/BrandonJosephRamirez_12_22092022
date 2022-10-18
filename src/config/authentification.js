@@ -10,12 +10,6 @@ export const login = createAsyncThunk(
       const data = await AuthService.login(email, password);
       return { user: data };
     } catch (error) {
-      // const errMsg =
-      // (error.res &&
-      //   error.res.data &&
-      //   error.res.data.mess)  ||
-      //   error.mess  ||
-      //   error.toString();
       return thunkAPI.rejectWithValue();
     }
   }

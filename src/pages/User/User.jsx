@@ -3,12 +3,35 @@ import { Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getProfile } from "../../config/User-slice";
 import { useEffect, useState } from "react";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { editProfile } from "../../config/New-User";
 import "../../styles/index.css";
 const User = () => {
   const { user: currentUser } = useSelector((state) => state.auth);
   const { entryUser, loading } = useSelector((state) => state.profile);
   const [editUserName, setEditUserName] = useState(false);
+  const dispatch = useDispatch();
+  const saveUser = (inputValue) => {
+    const { firstName, lastName } = inputValue;
+    dispatch(editProfile({ firstName, lastName }));
+    setEditUserName((editUserName) => false);
+    dispatch(getProfile());
+  };
 
+  useEffect(() => {
+    dispatch(getProfile());
+  }, []);
+
+  const initialValues = {
+    firstName: "",
+    lastName: "",
+  };
+
+  const validationSchema = Yup.object().shape({
+    firstName: Yup.string().required("This field is required!"),
+    lastName: Yup.string().required("This field is required!"),
+  });
   const userDataBalance = [
     {
       title: "Argent Bank Checking (x8349)",
@@ -26,16 +49,10 @@ const User = () => {
       balanceType: "Current Balance",
     },
   ];
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getProfile());
-  }, []);
 
   if (!currentUser) {
     return <Navigate to="/sign-in" />;
   }
-  // console.log(currentUser);
   console.log("entryUser", entryUser);
   if (entryUser === null) {
     return <p>Loading & getting your profile ready...</p>;
@@ -47,8 +64,7 @@ const User = () => {
           <h1>
             Welcome back
             <br />
-            {entryUser.body.firstName}
-            {entryUser.body.lastName}!
+            {entryUser.body.firstName} {entryUser.body.lastName} !
           </h1>
           <button className="edit-button" onClick={() => setEditUserName(true)}>
             Edit Name
@@ -60,7 +76,7 @@ const User = () => {
             Welcome back
             <br />
           </h1>
-          <form>
+          {/* <form>
             <p>
               <input
                 className="edit-name-input"
@@ -82,7 +98,56 @@ const User = () => {
             <button type="submit" className="edit-button">
               Save
             </button>
-          </form>
+          </form> */}
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={saveUser}
+          >
+            <Form>
+              {/* <div className="form-group input-wrapper">
+                <label htmlFor="firstName">First Name</label> */}
+              <Field
+                name="firstName"
+                type="text"
+                className="edit-name-input"
+                placeholder="First Name"
+              />
+              <ErrorMessage
+                name="firstName"
+                component="div"
+                className="alert alert-danger"
+              />
+              {/* </div> */}
+              {/* <div className="form-group input-wrapper">
+                <label htmlFor="lastName">Last Name</label> */}
+              <Field
+                name="lastName"
+                type="text"
+                className="edit-name-input"
+                placeholder="Last Name"
+              />
+              <ErrorMessage
+                name="lastName"
+                component="div"
+                className="alert alert-danger"
+              />
+              {/* </div> */}
+              <div className="form-group">
+                <button
+                  className="edit-button edit-name-button"
+                  onClick={() => setEditUserName(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+              <div className="form-group">
+                <button type="submit" className="edit-button edit-name-button">
+                  Save
+                </button>
+              </div>
+            </Form>
+          </Formik>
         </div>
       )}
 

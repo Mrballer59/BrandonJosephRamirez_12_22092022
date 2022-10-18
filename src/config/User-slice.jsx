@@ -1,6 +1,5 @@
 import axios from "axios";
 import authHeader from "../services/auth-nav";
-import userService from "../services/user-service";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 export const getProfile = createAsyncThunk(
