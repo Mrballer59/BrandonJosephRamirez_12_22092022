@@ -16,9 +16,15 @@ body {
 .main {
   flex: 1;
 }
+.main-logo-nav {
+  max-width: 100%;
+  width: 200px;
+}
 
 .bg-dark {
   background-color: #12002b;
+  padding-bottom: 2rem;
+  padding-top: 2rem;
 }
 
 .sr-only {
@@ -170,7 +176,7 @@ body {
   background-color: white;
   width: 300px;
   margin: 0 auto;
-  margin-top: 3rem;
+  /* margin-top: 3rem; */
   padding: 2rem;
 }
 
@@ -240,6 +246,7 @@ body {
   border: 0;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .account-content-wrapper {

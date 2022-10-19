@@ -20,7 +20,11 @@ export default function Nav() {
   return (
     <nav className="main-nav">
       <NavLink to="/" className="main-nav-logo">
-        <img src={mainLogo} alt="Logo of Argent Bank" />
+        <img
+          src={mainLogo}
+          alt="Logo of Argent Bank"
+          className="main-logo-nav"
+        />
         <h1 className="sr-only">Argent Bank</h1>
       </NavLink>
       {isLoggedIn ? (
