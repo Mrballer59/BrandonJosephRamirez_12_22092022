@@ -3,35 +3,18 @@ import { Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getProfile } from "../../config/User-slice";
 import { useEffect, useState } from "react";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from "yup";
 import { editProfile } from "../../config/New-User";
 import "../../styles/index.css";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { rememberMe } from "../../config/authentification";
+
 const User = () => {
   const { user: currentUser } = useSelector((state) => state.auth);
   const { entryUser, loading } = useSelector((state) => state.profile);
+  const { isLoggedIn } = useSelector((state) => state.auth);
   const [editUserName, setEditUserName] = useState(false);
-  const dispatch = useDispatch();
-  const saveUser = (inputValue) => {
-    const { firstName, lastName } = inputValue;
-    dispatch(editProfile({ firstName, lastName }));
-    setEditUserName((editUserName) => false);
-    dispatch(getProfile());
-  };
 
-  useEffect(() => {
-    dispatch(getProfile());
-  }, []);
-
-  const initialValues = {
-    firstName: "",
-    lastName: "",
-  };
-
-  const validationSchema = Yup.object().shape({
-    firstName: Yup.string().required("This field is required!"),
-    lastName: Yup.string().required("This field is required!"),
-  });
   const userDataBalance = [
     {
       title: "Argent Bank Checking (x8349)",
@@ -49,11 +32,38 @@ const User = () => {
       balanceType: "Current Balance",
     },
   ];
+  const dispatch = useDispatch();
 
-  if (!currentUser) {
+  const saveUser = (inputValue) => {
+    const { firstName, lastName } = inputValue;
+    dispatch(editProfile({ firstName, lastName }));
+    setEditUserName(false);
+    dispatch(getProfile());
+  };
+
+  useEffect(() => {
+    dispatch(getProfile());
+    const tokenUser = JSON.parse(localStorage.getItem("token"));
+    const checkBoxReminder = localStorage.getItem("rememberMe");
+    if (tokenUser && checkBoxReminder) {
+      dispatch(rememberMe());
+    }
+  }, [dispatch]);
+
+  const initialValues = {
+    firstName: entryUser === null ? "" : entryUser.body.firstName,
+    lastName: entryUser === null ? "" : entryUser.body.lastName,
+  };
+
+  const validationSchema = Yup.object().shape({
+    firstName: Yup.string().required("This field is required!"),
+    lastName: Yup.string().required("This field is required!"),
+  });
+
+  if (!isLoggedIn) {
     return <Navigate to="/sign-in" />;
   }
-  console.log("entryUser", entryUser);
+  // console.log("entryUser", entryUser);
   if (entryUser === null) {
     return <p>Loading & getting your profile ready...</p>;
   }
@@ -64,7 +74,7 @@ const User = () => {
           <h1>
             Welcome back
             <br />
-            {entryUser.body.firstName} {entryUser.body.lastName} !
+            {entryUser.body.firstName} {entryUser.body.lastName}!
           </h1>
           <button className="edit-button" onClick={() => setEditUserName(true)}>
             Edit Name
@@ -76,37 +86,12 @@ const User = () => {
             Welcome back
             <br />
           </h1>
-          {/* <form>
-            <p>
-              <input
-                className="edit-name-input"
-                placeholder="First Name"
-                defaultValue={entryUser.body.firstName}
-              />
-              <input
-                className="edit-name-input"
-                placeholder="Second Name"
-                defaultValue={entryUser.body.lastName}
-              />
-            </p>
-            <button
-              className="edit-button"
-              onClick={() => setEditUserName(false)}
-            >
-              Cancel
-            </button>
-            <button type="submit" className="edit-button">
-              Save
-            </button>
-          </form> */}
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={saveUser}
           >
             <Form>
-              {/* <div className="form-group input-wrapper">
-                <label htmlFor="firstName">First Name</label> */}
               <Field
                 name="firstName"
                 type="text"
@@ -118,9 +103,7 @@ const User = () => {
                 component="div"
                 className="alert alert-danger"
               />
-              {/* </div> */}
-              {/* <div className="form-group input-wrapper">
-                <label htmlFor="lastName">Last Name</label> */}
+
               <Field
                 name="lastName"
                 type="text"
@@ -132,16 +115,13 @@ const User = () => {
                 component="div"
                 className="alert alert-danger"
               />
-              {/* </div> */}
-              <div className="form-group">
+              <div>
                 <button
                   className="edit-button edit-name-button"
                   onClick={() => setEditUserName(false)}
                 >
                   Cancel
                 </button>
-              </div>
-              <div className="form-group">
                 <button type="submit" className="edit-button edit-name-button">
                   Save
                 </button>
@@ -150,7 +130,6 @@ const User = () => {
           </Formik>
         </div>
       )}
-
       <h2 className="sr-only">Accounts</h2>
       {userDataBalance.map((myCount, index) => (
         <section key={index} className="account">

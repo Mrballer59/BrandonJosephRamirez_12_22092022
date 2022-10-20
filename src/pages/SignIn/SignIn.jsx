@@ -1,5 +1,4 @@
 import React from "react";
-import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
@@ -8,7 +7,6 @@ import { login } from "../../config/authentification";
 import "../../styles/index.css";
 
 const SignIn = () => {
-  // const [loading, setLoading] = useState(false);
   const { isLoggedIn } = useSelector((state) => state.auth);
   const { entryUser, loading } = useSelector((state) => state.profile);
   const dispatch = useDispatch();
@@ -25,7 +23,10 @@ const SignIn = () => {
   });
 
   const handleLogin = (formValue) => {
-    const { email, password } = formValue;
+    const { email, password, rememberMeBox } = formValue;
+    if (rememberMeBox) {
+      localStorage.setItem("rememberMe", true);
+    }
     // setLoading(true);
     dispatch(login({ email, password }));
   };
@@ -64,7 +65,7 @@ const SignIn = () => {
               />
             </div>
             <div className="input-remember">
-              <input type="checkbox" id="remember-me" />
+              <Field type="checkbox" id="remember-me" name="rememberMeBox" />
               <label htmlFor="remember-me">Remember me</label>
             </div>
             <div className="form-group">

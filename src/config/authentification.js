@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import AuthService from "../services/auth-service";
+
 //getting the user and storing it in the locaalStorage
 const user = JSON.parse(localStorage.getItem("user"));
 
@@ -14,7 +15,6 @@ export const login = createAsyncThunk(
     }
   }
 );
-
 //logout part export to the right page
 export const logout = createAsyncThunk("auth/logout", async () => {
   await AuthService.logout();
@@ -27,6 +27,12 @@ const initialState = user
 const authSlice = createSlice({
   name: "auth",
   initialState,
+  reducers: {
+    rememberMe: (state) => {
+      state.isLoggedIn = true;
+    },
+  },
+
   extraReducers: {
     [login.fulfilled]: (state, action) => {
       state.isLoggedIn = true;
@@ -42,5 +48,6 @@ const authSlice = createSlice({
     },
   },
 });
-const { reducer } = authSlice;
+const { reducer, actions } = authSlice;
+export const { rememberMe } = actions;
 export default reducer;

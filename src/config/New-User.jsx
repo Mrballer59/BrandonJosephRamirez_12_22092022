@@ -1,6 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import editService from "../services/editUser-service";
 
+const initialState = {
+  entryUser: null,
+  loading: false,
+};
+
 export const editProfile = createAsyncThunk(
   "newProfile/setProfil",
   async ({ firstName, lastName }, thunkAPI) => {
@@ -12,11 +17,6 @@ export const editProfile = createAsyncThunk(
     }
   }
 );
-
-const initialState = {
-  entryUser: null,
-  loading: false,
-};
 
 const newUserSlice = createSlice({
   name: "newUser",

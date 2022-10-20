@@ -2,6 +2,11 @@ import axios from "axios";
 import authHeader from "../services/auth-nav";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+const initialState = {
+  entryUser: null,
+  loading: false,
+};
+
 export const getProfile = createAsyncThunk(
   "profile/getProfil",
   async (thunkAPI) => {
@@ -13,11 +18,6 @@ export const getProfile = createAsyncThunk(
     return res.data;
   }
 );
-
-const initialState = {
-  entryUser: null,
-  loading: false,
-};
 
 const profileSlice = createSlice({
   name: "profile",
