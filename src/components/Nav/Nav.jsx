@@ -4,16 +4,15 @@ import { NavLink } from "react-router-dom";
 import mainLogo from "../../assets/argentBankLogo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../config/authentification";
+import { logout } from "../../auth/authSlice";
 import "../../styles/index.css";
 
 export default function Nav() {
   const dispatch = useDispatch();
-  const { isLoggedIn } = useSelector((state) => state.auth);
-  const { entryUser } = useSelector((state) => state.profile);
+  const { token, firstName } = useSelector((state) => state.auth);
 
   //function to log out
-  const logoutUser = () => {
+  const onLogout = () => {
     dispatch(logout());
   };
 
@@ -27,24 +26,22 @@ export default function Nav() {
         />
         <h1 className="sr-only">Argent Bank</h1>
       </NavLink>
-      {isLoggedIn ? (
-        entryUser === null ? (
-          <p>Loading & getting your profile ready </p>
-        ) : (
-          <div>
-            <NavLink className="main-nav-item" to="/user">
-              <FontAwesomeIcon icon={faUserCircle} className="user-icon" />
-              {entryUser.body.firstName}
-            </NavLink>
-            <button className="signout-btn" onClick={logoutUser}>
+      {token ? (
+        <div>
+          <NavLink className="main-nav-item">
+            <FontAwesomeIcon icon={faUserCircle} className="user-icon" />
+            {firstName}
+          </NavLink>
+          <NavLink>
+            <button className="signout-btn" to="/" onClick={onLogout}>
               <FontAwesomeIcon icon={faSignOut} className="user-icon" />
               Sign Out
             </button>
-          </div>
-        )
+          </NavLink>
+        </div>
       ) : (
         <div>
-          <NavLink className="main-nav-item" to="/user">
+          <NavLink className="main-nav-item" to="/sign-in">
             <FontAwesomeIcon icon={faUserCircle} className="user-icon" />
             Sign In
           </NavLink>
