@@ -6,17 +6,11 @@ function Error404() {
     <main className="main">
       <div className="error404">
         <h1>Error 404 Sorry page not found</h1>
-        <NavLink to="/">
-          <button>Go back to the home page </button>
+        <NavLink to="/sign-in">
+          <button>Go back to sign-in page </button>
         </NavLink>
       </div>
     </main>
   );
 }
 export default Error404;
-
-{
-  /* <NavLink to="/">
-  <img src={mainLogo} alt="Logo of Argent Bank" />
-</NavLink>; */
-}
