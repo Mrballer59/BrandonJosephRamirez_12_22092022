@@ -1,23 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import MoneyIcon from "../../assets/icon-money.png";
 import IconSecurity from "../../assets/icon-security.png";
 import ChatIcon from "../../assets/icon-chat.png";
-import { useDispatch } from "react-redux";
-import { getProfile } from "../../config/User-slice";
-import { rememberMe } from "../../config/authentification";
 
 const Home = () => {
-  const dispatch = useDispatch();
-
-  // Remember me part
-  useEffect(() => {
-    const tokenUser = JSON.parse(localStorage.getItem("token"));
-    const checkBoxReminder = localStorage.getItem("rememberMe");
-    if (tokenUser && checkBoxReminder) {
-      dispatch(getProfile());
-      dispatch(rememberMe());
-    }
-  }, []);
   return (
     <div className="index-page">
       <main>

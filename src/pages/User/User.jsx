@@ -1,20 +1,52 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getProfile } from "../../config/User-slice";
 import { useEffect, useState } from "react";
-import { editProfile } from "../../config/New-User";
 import "../../styles/index.css";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { rememberMe } from "../../config/authentification";
+import { useNavigate } from "react-router-dom";
+import { userProfile, updateUserData } from "../../auth/authSlice";
 
 const User = () => {
-  const { user: currentUser } = useSelector((state) => state.auth);
-  const { entryUser, loading } = useSelector((state) => state.profile);
-  const { isLoggedIn } = useSelector((state) => state.auth);
-  const [editUserName, setEditUserName] = useState(false);
+  const { token, firstName, lastName } = useSelector((state) => state.auth);
+  const authFirstName = useSelector((state) => state.auth.firstName);
+  const authLastName = useSelector((state) => state.auth.lastName);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!token) {
+      navigate("/sign-in");
+    }
+    navigate("/user");
+    dispatch(userProfile());
+  }, [token, navigate, dispatch]);
+
+  //Edit input name
+  const [editUserNameForm, setEditNameForm] = useState(false);
+
+  const editUserForm = (e) => {
+    e.preventDefault();
+    setEditNameForm(!editUserNameForm);
+  };
+
+  const [updateFirstName, setUpdateFirstName] = useState("");
+  const [updateLastName, setUpdateLastName] = useState("");
+
+  const saveForm = (e) => {
+    e.preventDefault();
+    // dispatch(updateUserData(updateUserName));
+    // console.log(updateUserName);
+    const userUpdateName = {
+      firstName: updateFirstName ? updateFirstName : firstName,
+      lastName: updateLastName ? updateLastName : lastName,
+    };
+    dispatch(updateUserData(userUpdateName));
+    console.log(userUpdateName);
+    setEditNameForm();
+  };
+  if (!token) {
+    return <Navigate to="/sign-in" />;
+  }
   const userDataBalance = [
     {
       title: "Argent Bank Checking (x8349)",
@@ -32,104 +64,64 @@ const User = () => {
       balanceType: "Current Balance",
     },
   ];
-  const dispatch = useDispatch();
 
-  const saveUser = (inputValue) => {
-    const { firstName, lastName } = inputValue;
-    dispatch(editProfile({ firstName, lastName }));
-    setEditUserName(false);
-    dispatch(getProfile());
-  };
-
-  useEffect(() => {
-    dispatch(getProfile());
-    const tokenUser = JSON.parse(localStorage.getItem("token"));
-    const checkBoxReminder = localStorage.getItem("rememberMe");
-    if (tokenUser && checkBoxReminder) {
-      dispatch(rememberMe());
-    }
-  }, [dispatch]);
-
-  const initialValues = {
-    firstName: entryUser === null ? "" : entryUser.body.firstName,
-    lastName: entryUser === null ? "" : entryUser.body.lastName,
-  };
-
-  const validationSchema = Yup.object().shape({
-    firstName: Yup.string().required("This field is required!"),
-    lastName: Yup.string().required("This field is required!"),
-  });
-
-  if (!isLoggedIn) {
-    return <Navigate to="/sign-in" />;
-  }
-  // console.log("entryUser", entryUser);
-  if (entryUser === null) {
-    return <p>Loading & getting your profile ready...</p>;
-  }
+  //Jsx for the userName switch and the the transaction.
   return (
     <main className="main bg-dark">
-      {editUserName === false ? (
-        <div className="header">
-          <h1>
-            Welcome back
-            <br />
-            {entryUser.body.firstName} {entryUser.body.lastName}!
-          </h1>
-          <button className="edit-button" onClick={() => setEditUserName(true)}>
-            Edit Name
-          </button>
-        </div>
-      ) : (
-        <div className="header">
-          <h1>
-            Welcome back
-            <br />
-          </h1>
-          <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={saveUser}
-          >
-            <Form>
-              <Field
-                name="firstName"
-                type="text"
+      <div className="header">
+        <h1 className="blackTitle whiteTitle">Welcome back</h1>
+        {editUserNameForm ? (
+          <form className="userForm">
+            <div className="inputWrapper">
+              <label htmlFor="firstName"></label>
+              <input
                 className="edit-name-input"
-                placeholder="First Name"
-              />
-              <ErrorMessage
+                type="text"
+                id="firstName"
                 name="firstName"
-                component="div"
-                className="alert alert-danger"
+                placeholder={firstName}
+                required
+                onChange={(e) => setUpdateFirstName(e.target.value)}
               />
+              <label htmlFor="lastName"></label>
+              <input
+                className="edit-name-input"
+                type="text"
+                id="lastName"
+                name="lastName"
+                placeholder={lastName}
+                required
+                onChange={(e) => setUpdateLastName(e.target.value)}
+              />
+            </div>
 
-              <Field
-                name="lastName"
-                type="text"
-                className="edit-name-input"
-                placeholder="Last Name"
-              />
-              <ErrorMessage
-                name="lastName"
-                component="div"
-                className="alert alert-danger"
-              />
-              <div>
-                <button
-                  className="edit-button edit-name-button"
-                  onClick={() => setEditUserName(false)}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="edit-button edit-name-button">
-                  Save
-                </button>
-              </div>
-            </Form>
-          </Formik>
-        </div>
-      )}
+            <div className="userButtons">
+              <button
+                className="edit-button edit-name-button"
+                type="submit"
+                onClick={editUserForm}
+              >
+                Cancel
+              </button>
+              <button
+                className="edit-button edit-name-button"
+                type="submit"
+                onClick={saveForm}
+              >
+                Save
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div>
+            <h1>{authFirstName + " " + authLastName}!</h1>
+            <button className="edit-button" onClick={editUserForm}>
+              Edit Name
+            </button>
+          </div>
+        )}
+      </div>
+
       <h2 className="sr-only">Accounts</h2>
       {userDataBalance.map((myCount, index) => (
         <section key={index} className="account">

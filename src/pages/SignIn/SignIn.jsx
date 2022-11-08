@@ -1,54 +1,70 @@
+import { Formik, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { login } from "../../config/authentification";
+import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { login, isRememberMe } from "../../auth/authSlice";
 import "../../styles/index.css";
 
 const SignIn = () => {
-  const { isLoggedIn } = useSelector((state) => state.auth);
-  const { entryUser, loading } = useSelector((state) => state.profile);
+  const { register, handleSubmit } = useForm();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const { isError, isSuccess, rememberMe, token } = useSelector(
+    (state) => state.auth
+  );
   // Veriables for the login in info
   const initialValues = {
     email: "",
     password: "",
   };
-  // setup for the login in info
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate("/user");
+    }
+  }, [isSuccess, navigate]);
+
+  const handleRememberMe = (e) => {
+    dispatch(isRememberMe(e.target.checked));
+  };
+
+  const submitForm = (form) => {
+    dispatch(login(form));
+  };
   const validationSchema = Yup.object().shape({
     email: Yup.string().required("Email is required!"),
     password: Yup.string().required("Password is required!"),
   });
 
-  const handleLogin = (formValue) => {
-    const { email, password, rememberMeBox } = formValue;
-    if (rememberMeBox) {
-      localStorage.setItem("rememberMe", true);
-    }
-    // setLoading(true);
-    dispatch(login({ email, password }));
-  };
-
-  if (isLoggedIn) {
-    return <Navigate to="/user" />;
+  if (rememberMe === true) {
+    localStorage.setItem("token", token);
   }
 
   return (
     <main className="main bg-dark">
       <section className="sign-in-content">
         <i className="fa fa-user-circle sign-in-icon"></i>
-        <h1 className="test1">Sign In</h1>
+        <h1>Sign In</h1>
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={handleLogin}
+          onSubmit={handleSubmit(submitForm)}
         >
-          <Form>
+          <Form className="form" onSubmit={handleSubmit(submitForm)}>
+            {isError && <div>Connexion error </div>}
             <div className="form-group input-wrapper">
               <label htmlFor="email">Username</label>
-              <Field name="email" type="text" className="form-control" />
+              <input
+                {...register("email", { required: true })}
+                name="email"
+                type="text"
+                id="email"
+                className="form-control"
+              />
               <ErrorMessage
                 name="email"
                 component="div"
@@ -57,7 +73,13 @@ const SignIn = () => {
             </div>
             <div className="form-group input-wrapper">
               <label htmlFor="password">Password</label>
-              <Field name="password" type="password" className="form-control" />
+              <input
+                {...register("password", { required: true })}
+                name="password"
+                type="password"
+                className="form-control"
+                id="password"
+              />
               <ErrorMessage
                 name="password"
                 component="div"
@@ -65,18 +87,20 @@ const SignIn = () => {
               />
             </div>
             <div className="input-remember">
-              <Field type="checkbox" id="remember-me" name="rememberMeBox" />
+              <input
+                type="checkbox"
+                id="remember-me"
+                name="rememberMeBox"
+                onChange={handleRememberMe}
+              />
               <label htmlFor="remember-me">Remember me</label>
             </div>
-            <div className="form-group">
-              <button
-                type="submit"
-                className="btn btn-primary btn-block sign-in-button"
-                disabled={loading}
-              >
-                <span>Sign In</span>
-              </button>
-            </div>
+            <button
+              className="btn btn-primary btn-block sign-in-button"
+              type="submit"
+            >
+              Sign In
+            </button>
           </Form>
         </Formik>
       </section>
